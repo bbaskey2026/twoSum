@@ -1,4 +1,5 @@
-const num1=23;
-const num2=40;
-const sum=num1+num2;
-console.log("Sum of num1 and num2",sum);
+const twoSum=(num1,num2)=>{
+    const twosum=num1+num2;
+    return twosum;
+}
+console.log("Sum of two numbers is :",twoSum(5,10));
