@@ -10,5 +10,8 @@ const difference=(num1,num2)=>{
 console.log("Difference of two numbers is :",difference(10,5));
 const number1=20;
 const number2=30;
-const multiplication=number1*number2;
-console.log("Multiplication of two numbers is :",multiplication);
+const multiplication=(number1,number2)=>{
+    const product=number1*number2;
+    return product;}
+    
+console.log("Multiplication of two numbers is :",multiplication(30,50));
