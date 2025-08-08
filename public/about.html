@@ -3,9 +3,382 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Random Users - Results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-top: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .users-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .user-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .user-username {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .user-info {
+            space-y: 12px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 8px 0;
+        }
+
+        .info-icon {
+            width: 20px;
+            margin-right: 12px;
+            text-align: center;
+            color: #667eea;
+        }
+
+        .info-text {
+            color: #555;
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .info-text a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .info-text a:hover {
+            color: #764ba2;
+        }
+
+        .company-info {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .company-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .company-catchphrase {
+            font-style: italic;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-data {
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+
+        .no-data h2 {
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .no-data p {
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .users-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .user-card {
+                padding: 25px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
+        .stagger-5 { animation-delay: 0.5s; }
+        .stagger-6 { animation-delay: 0.6s; }
+    </style>
 </head>
 <body>
-    <h1>hii from about section of the browser</h1>
+    <div class="users-container">
+        <div class="header">
+            <a href="/" class="back-btn">← Back to Home</a>
+            <h1>Your Random Users</h1>
+            <p>Here are the amazing profiles we found for you</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading user profiles...</p>
+        </div>
+
+        <div id="noData" class="no-data" style="display: none;">
+            <h2>🚫 No Data Found</h2>
+            <p>Oops! It looks like there are no users to display.</p>
+            <a href="/" class="back-btn">Fetch Some Users</a>
+        </div>
+
+        <div id="usersGrid" class="users-grid" style="display: none;">
+            <!-- Users will be populated here -->
+        </div>
+    </div>
+
+    <script>
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').toUpperCase();
+        }
+
+        function displayUsers(users) {
+            const grid = document.getElementById('usersGrid');
+            const loading = document.getElementById('loading');
+            const noData = document.getElementById('noData');
+
+            loading.style.display = 'none';
+
+            if (!users || users.length === 0) {
+                noData.style.display = 'block';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            
+            users.forEach((user, index) => {
+                const userCard = document.createElement('div');
+                userCard.className = `user-card fade-in stagger-${index + 1}`;
+                
+                userCard.innerHTML = `
+                    <div class="user-avatar">${getInitials(user.name)}</div>
+                    <div class="user-name">${user.name}</div>
+                    <div class="user-username">@${user.username}</div>
+                    
+                    <div class="user-info">
+                        <div class="info-item">
+                            <div class="info-icon">📧</div>
+                            <div class="info-text">
+                                <a href="mailto:${user.email}">${user.email}</a>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📱</div>
+                            <div class="info-text">${user.phone}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">🌐</div>
+                            <div class="info-text">
+                                <a href="http://${user.website}" target="_blank">${user.website}</a>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">📍</div>
+                            <div class="info-text">
+                                ${user.address.city}, ${user.address.zipcode}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="company-info">
+                        <div class="company-name">🏢 ${user.company.name}</div>
+                        <div class="company-catchphrase">${user.company.catchPhrase}</div>
+                    </div>
+                `;
+                
+                grid.appendChild(userCard);
+            });
+        }
+
+        // Load users when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const users = JSON.parse(sessionStorage.getItem('randomUsers') || 'null');
+            
+            // Simulate loading time for better UX
+            setTimeout(() => {
+                displayUsers(users);
+            }, 1000);
+        });
+
+        // Add some interactive card effects
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.user-card');
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 15;
+                    const rotateY = (centerX - x) / 15;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px)`;
+                }
+            });
+        });
+
+        document.addEventListener('mouseleave', () => {
+            const cards = document.querySelectorAll('.user-card');
+            cards.forEach(card => {
+                card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+            });
+        });
+    </script>
 </body>
 </html>
